@@ -4,10 +4,32 @@ import { TextField, Button } from '@mui/material';
 import { RegisterFormInterface } from './register';
 
 const SignInForm: React.FC = () => {
-    const { control, reset, handleSubmit, formState: { errors } } = useForm<RegisterFormInterface>();
+    const { control, handleSubmit, formState: { errors } } = useForm<RegisterFormInterface>();
 
     const onSubmit = (data: RegisterFormInterface) => {
-        console.log(data);
+        const { email, password } = data
+        fetch('http://localhost:4002/auth/sign-in', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ email, password })
+        }).then((res) => res.json()).then((data) => {
+            if (data.admin) {
+                console.log('yes');
+
+            }
+            if (data.password) {
+                console.log('error');
+            }
+            if (data.noacc) {
+                console.log('no acc');
+
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
 
         // try {
         //     const response = await fetch('http://localhost:4002/sign-in', {
@@ -31,7 +53,6 @@ const SignInForm: React.FC = () => {
         // } finally {
         //     reset(); // Reset form fields after submission
         // }
-        reset()
     };
 
     return (
