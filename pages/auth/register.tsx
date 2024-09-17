@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
-import { useRouter } from 'next/router';
+
 
 
 export interface RegisterFormInterface {
@@ -14,33 +14,38 @@ export interface RegisterFormInterface {
 }
 
 const RegisterForm: React.FC = () => {
-    const { control, handleSubmit, watch, reset, formState: { errors } } = useForm<RegisterFormInterface>();
+    const { control, handleSubmit, watch, reset, setError, formState: { errors } } = useForm<RegisterFormInterface>();
     const passwordValue = watch('password');
-    const router = useRouter()
+
     const onSubmit = async (data: RegisterFormInterface) => {
-        try {
-            const response = await fetch('http://localhost:4002/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const result = await response.json();
-            console.log('Server response:', result);
-
-            // Optionally handle server response here
-
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        } finally {
-            reset();
-            router.push('/auth/sign-in'); /// Reset form fields after submission
+        if (data.password !== data.confirmPassword) {
+            console.error('Passwords do not match');
+            return;
         }
+        const { username, email, password } = data;
+        fetch('http://localhost:4002/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ username, email, password })
+        }).then((res) => res.json()).then((data) => {
+            if (data.admin) {
+                console.log(data.admin);
+                reset()
+
+            }
+            if (data.error) {
+                Object.keys(data.error).forEach((key) => {
+                    setError(key as keyof RegisterFormInterface, {
+                        type: 'manual',
+                        message: data.error[key]
+                    });
+                });
+            }
+        }).catch((err) => console.log(err)
+        )
     };
 
     return (
@@ -56,7 +61,14 @@ const RegisterForm: React.FC = () => {
                 name="username"
                 defaultValue=''
                 control={control}
-                rules={{ required: 'Username is required' }}
+                rules={{
+
+                    required: 'Username is required',
+                    minLength: {
+                        value: 6,
+                        message: 'Username must be at least 6 characters long'
+                    },
+                }}
                 render={({ field }) => (
                     <TextField
                         {...field}
