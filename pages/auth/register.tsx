@@ -1,28 +1,45 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
 
-
+// Define the validation schema
+const validationSchema = Yup.object().shape({
+    username: Yup.string()
+        .required('Username is required')
+        .min(6, 'Username must be at least 6 characters long'),
+    email: Yup.string()
+        .required('Email is required')
+        .email('Invalid email address')
+        .notOneOf(['admin123@gmail.com'], 'This email is just an example'),
+    password: Yup.string()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters long')
+        .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'Password must contain at least one uppercase letter, one number, and one special character'),
+    confirmPassword: Yup.string()
+        .required('Please confirm your password')
+        .oneOf([Yup.ref('password')], 'Passwords must match'),
+});
 
 export interface RegisterFormInterface {
-    __v?: number,
-    _id?: string,
     username: string;
     email: string;
     password: string;
-    confirmPassword: string,
+    confirmPassword: string;
 }
 
 const RegisterForm: React.FC = () => {
-    const { control, handleSubmit, watch, reset, setError, formState: { errors } } = useForm<RegisterFormInterface>();
-    const passwordValue = watch('password');
+    const { control, handleSubmit, reset, setError, formState: { errors } } = useForm<RegisterFormInterface>({
+        resolver: yupResolver(validationSchema) // Integrate Yup validation
+    });
+
+    const router = useRouter()
 
     const onSubmit = async (data: RegisterFormInterface) => {
-        if (data.password !== data.confirmPassword) {
-            console.error('Passwords do not match');
-            return;
-        }
         const { username, email, password } = data;
+
         fetch('http://localhost:4002/auth/register', {
             method: 'POST',
             headers: {
@@ -30,22 +47,26 @@ const RegisterForm: React.FC = () => {
             },
             credentials: 'include',
             body: JSON.stringify({ username, email, password })
-        }).then((res) => res.json()).then((data) => {
-            if (data.admin) {
-                console.log(data.admin);
-                reset()
-
-            }
-            if (data.error) {
-                Object.keys(data.error).forEach((key) => {
-                    setError(key as keyof RegisterFormInterface, {
-                        type: 'manual',
-                        message: data.error[key]
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.admin) {
+                    router.push('/auth/sign-in')
+                    // alert('success') replace by a modal
+                    reset();
+                }
+                if (data.error) {
+                    Object.keys(data.error).forEach((key) => {
+                        setError(key as keyof RegisterFormInterface, {
+                            type: 'manual',
+                            message: data.error[key]
+                        });
                     });
-                });
-            }
-        }).catch((err) => console.log(err)
-        )
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     };
 
     return (
@@ -59,23 +80,14 @@ const RegisterForm: React.FC = () => {
 
             <Controller
                 name="username"
-                defaultValue=''
                 control={control}
-                rules={{
-
-                    required: 'Username is required',
-                    minLength: {
-                        value: 6,
-                        message: 'Username must be at least 6 characters long'
-                    },
-                }}
                 render={({ field }) => (
                     <TextField
                         {...field}
                         label="Username"
                         variant="outlined"
                         fullWidth
-                        autoComplete="new-username" // To prevent autofill
+                        autoComplete="new-username"
                         error={!!errors.username}
                         helperText={errors.username?.message}
                     />
@@ -84,16 +96,7 @@ const RegisterForm: React.FC = () => {
 
             <Controller
                 name="email"
-                defaultValue=''
                 control={control}
-                rules={{
-                    required: 'Email is required',
-                    pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: 'Invalid email address'
-                    },
-                    validate: value => value !== 'admin123@gmail.com' || 'This email is just an example'
-                }}
                 render={({ field }) => (
                     <TextField
                         {...field}
@@ -111,18 +114,6 @@ const RegisterForm: React.FC = () => {
             <Controller
                 name="password"
                 control={control}
-                defaultValue={''}
-                rules={{
-                    required: 'Password is required',
-                    minLength: {
-                        value: 8,
-                        message: 'Password must be at least 8 characters long'
-                    },
-                    pattern: {
-                        value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                        message: 'Password must contain at least one uppercase letter, one number, and one special character'
-                    }
-                }}
                 render={({ field }) => (
                     <TextField
                         {...field}
@@ -130,22 +121,16 @@ const RegisterForm: React.FC = () => {
                         label="Password"
                         variant="outlined"
                         fullWidth
-                        autoComplete="new-password" // To prevent autofill
+                        autoComplete="new-password"
                         error={!!errors.password}
                         helperText={errors.password?.message}
                     />
                 )}
             />
 
-            {/* Confirm Password Field */}
             <Controller
                 name="confirmPassword"
                 control={control}
-                defaultValue=""
-                rules={{
-                    required: 'Please confirm your password',
-                    validate: value => value === passwordValue || 'Passwords do not match'
-                }}
                 render={({ field }) => (
                     <TextField
                         {...field}

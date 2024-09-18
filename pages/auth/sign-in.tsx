@@ -1,12 +1,31 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
-import { RegisterFormInterface } from './register';
+import { useRouter } from 'next/router';
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup';
+
+export interface SignInInterface {
+    email: string;
+    password: string;
+}
+
+const validationSchema = Yup.object().shape({
+    email: Yup.string()
+        .required('Email is required')
+        .email('Invalid email address'),
+    password: Yup.string()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters long')
+        .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, 'Password must contain at least one uppercase letter, one number, and one special character'),
+});
 
 const SignInForm: React.FC = () => {
-    const { control, handleSubmit, formState: { errors } } = useForm<RegisterFormInterface>();
-
-    const onSubmit = (data: RegisterFormInterface) => {
+    const { control, handleSubmit, setError, formState: { errors } } = useForm<SignInInterface>({
+        resolver: yupResolver(validationSchema)
+    });
+    const router = useRouter()
+    const onSubmit = (data: SignInInterface) => {
         const { email, password } = data
         fetch('http://localhost:4002/auth/sign-in', {
             method: 'POST',
@@ -17,42 +36,19 @@ const SignInForm: React.FC = () => {
             body: JSON.stringify({ email, password })
         }).then((res) => res.json()).then((data) => {
             if (data.admin) {
-                console.log('yes');
-
+                router.push('/dashboard')
             }
-            if (data.password) {
-                console.log('error');
-            }
-            if (data.noacc) {
-                console.log('no acc');
-
+            if (data.error) {
+                Object.keys(data.error).forEach((key) => {
+                    setError(key as keyof SignInInterface, {
+                        type: 'manual',
+                        message: data.error[key]
+                    });
+                });
             }
         }).catch((err) => {
             console.log(err)
         })
-
-        // try {
-        //     const response = await fetch('http://localhost:4002/sign-in', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(data),
-        //     });
-        //     if (!response.ok) {
-        //         throw new Error('Network response was not ok');
-        //     }
-
-        //     const result = await response.json();
-        //     console.log('Server response:', result);
-
-        //     // Optionally handle server response here
-
-        // } catch (error) {
-        //     console.error('There was a problem with the fetch operation:', error);
-        // } finally {
-        //     reset(); // Reset form fields after submission
-        // }
     };
 
     return (
@@ -64,19 +60,10 @@ const SignInForm: React.FC = () => {
         >
             <h2 className='text-2xl font-bold text-center'>Sign In</h2>
 
-
             <Controller
                 name="email"
                 defaultValue=''
                 control={control}
-                rules={{
-                    required: 'Email is required',
-                    pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: 'Invalid email address'
-                    },
-                    validate: value => value !== 'admin123@gmail.com' || 'This email is just an example'
-                }}
                 render={({ field }) => (
                     <TextField
                         {...field}
@@ -95,17 +82,6 @@ const SignInForm: React.FC = () => {
                 name="password"
                 control={control}
                 defaultValue={''}
-                rules={{
-                    required: 'Password is required',
-                    minLength: {
-                        value: 8,
-                        message: 'Password must be at least 8 characters long'
-                    },
-                    pattern: {
-                        value: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                        message: 'Password must contain at least one uppercase letter, one number, and one special character'
-                    }
-                }}
                 render={({ field }) => (
                     <TextField
                         {...field}
