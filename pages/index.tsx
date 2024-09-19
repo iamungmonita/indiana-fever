@@ -1,83 +1,131 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { RegisterSchema } from "@/schema/register";
-
-export interface FormValues {
-  username: string,
-  email: string,
-  password: string
-}
+import { imagesCon } from "@/constant/images";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { Fade } from 'react-awesome-reveal'
+import { ContactForm, Card } from "@/core/components";
 
 export default function Home() {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
-    defaultValues: {
-      username: '',
-      email: '',
-      password: ''
-    },
-    resolver: yupResolver(RegisterSchema)
-  })
-  const submitFunction = async (data: FormValues) => {
-    console.log('submitted form', data);
-    try {
-      const response = await fetch('http://localhost:4002/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-      const result = await response.json();
-      console.log('Server response:', result);
+  // Automatically change the background every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % imagesCon.length);
+    }, 5000);
 
-      // Optionally handle server response here
-
-    } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-    } finally {
-      reset(); // Reset form fields after submission
-    }
-  }
-
-
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
 
   return (
-    <form
-      className="min-w-[500px] space-y-2 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      onSubmit={handleSubmit(submitFunction)} noValidate>
-      <label htmlFor="username">Username</label>
-      <p className="text-sm text-red-500">{errors.username?.message}</p>
-      <input
-        type="text"
-        id="username"
-        className="border outline-none p-2 w-full bg-gray-200"
-        {...register('username')} />
-
-      <label htmlFor="email">Email</label>
-      <p className="text-sm text-red-500">{errors.email?.message}</p>
-      <input
-        type="email"
-        id="email"
-        className="border outline-none p-2 w-full bg-gray-200"
-        {...register('email')} />
-
-      <label htmlFor="Password">Password</label>
-      <p className="text-sm text-red-500">{errors.password?.message}</p>
-      <input
-        type="password"
-        id="password"
-
-        className="border outline-none p-2 w-full bg-gray-200"
-        {...register('password')} />
-
-      <input
-        type="submit"
-        value="Submit"
-        className="bg-blue-400 w-full p-2" />
-    </form>
+    <div className="w-full h-full overflow-hidden">
+      <div className="w-screen h-screen overflow-y-scroll hide-scrollbar overflow-x-hidden scroll-smooth snap-y snap-mandatory">
+        <nav className="fixed w-full bg-white z-10 shadow p-2 flex items-center justify-between">
+          <div>
+            <Image src={'/hawkeyes.png'} alt="logo" width={100} height={100} />
+          </div>
+          <ul className="flex justify-center items-center gap-x-10 p-5">
+            <Link href="#home">Home</Link>
+            <Link href="#one">About</Link>
+            <Link href="#two">Contact</Link>
+            <Link href="#three">Location</Link>
+            <Link href="#four">Shop</Link>
+          </ul>
+        </nav>
+        <section id="home"
+          className="whitespace-nowrap transition-transform duration-1000 ease-in-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {imagesCon.map((image, index) => (
+            <div
+              key={index}
+              className="inline-block w-full h-screen"
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          ))}
+        </section>
+        <section id="both" className="grid grid-cols-2">
+          <Fade direction="left"
+            className="text-center bg-red-200 flex justify-center items-center w-full mx-auto h-screen flex-col"
+            style={{
+              backgroundImage: `url(${imagesCon[0]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}>
+            <div
+              className="px-10">
+              <h2>about</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque quo, illum laboriosam voluptate quasi ullam a assumenda omnis pariatur quidem, iure laborum eum tenetur fuga, molestias quas doloremque exercitationem minus.</p>
+            </div>
+          </Fade>
+          <Fade
+            direction="right"
+            className="text-center flex justify-center items-center w-full h-screen flex-col"
+            style={{
+              backgroundImage: `url(${imagesCon[1]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}>
+            <div
+              className="px-10">
+              <h2>about</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque quo, illum laboriosam voluptate quasi ullam a assumenda omnis pariatur quidem, iure laborum eum tenetur fuga, molestias quas doloremque exercitationem minus.</p>
+            </div>
+          </Fade>
+        </section>
+        <Fade>
+          <section
+            className="grid grid-cols-2">
+            <section
+              id="one"
+              className="text-center flex justify-center items-center h-screen flex-col">
+            </section>
+            <div
+              className="w-full h-screen flex justify-center items-center mx-auto max-w-[80%]">
+              <h2>about</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque quo, illum laboriosam voluptate quasi ullam a assumenda omnis pariatur quidem, iure laborum eum tenetur fuga, molestias quas doloremque exercitationem minus.</p>
+            </div>
+          </section>
+        </Fade>
+        <Fade>
+          <section
+            id="two"
+            className=" w-screen h-screen">
+            <div className="w-[80%] h-screen text-center mx-auto grid grid-cols-6 items-center">
+              <div className="col-span-2">
+                <Card />
+              </div>
+              <div className="col-span-4">
+                <ContactForm />
+              </div>
+            </div>
+          </section>
+        </Fade>
+        <Fade>
+          <section
+            id="three"
+            className="text-center flex justify-center items-center max-w-[80%] mx-auto  h-screen flex-col">
+            <div>
+              <h2>location</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius, itaque pariatur! Sunt quos corporis illum repellat fugiat quia ab quis impedit inventore explicabo, aperiam, sapiente sint quam perspiciatis vel possimus?</p>
+            </div>
+          </section>
+        </Fade>
+        <Fade>
+          <section
+            id="four"
+            className="text-center flex justify-center items-center w-screen h-screen flex-col">
+            <div>
+              <h2>shop</h2>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus, deleniti? Quae est libero quisquam ipsam, repellendus enim nam eligendi unde ullam officia in? Distinctio repellat enim ad nostrum quis cumque!</p>
+            </div>
+          </section>
+        </Fade>
+      </div>
+    </div >
   );
 }
