@@ -3,21 +3,37 @@
 @tailwind utilities;
 
 
-body {
- 
-  height: 100vh;
 
+.hide-scrollbar {
+  scrollbar-width: none;
 }
-.container {
-  width: 100%;
-  height: 100%;
-  
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Edge */
 }
-section {
+
+section#one {
+  background-image: url('https://cdn2.creativecirclemedia.com/crawfordsville/original/20240605-123156-cda-thumbnail_USATSI_23444438.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+section#two {
+  background-image: url('https://cdn2.creativecirclemedia.com/crawfordsville/original/20240605-123156-cda-thumbnail_USATSI_23444438.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+section#four {
+  background-image: url('https://media.cnn.com/api/v1/images/stellar/prod/2024-02-24t071013z-1827543648-mt1usatoday22603379-rtrmadp-3-ncaa-womens-basketball-penn-st-at-iowa.jpg?c=16x9&q=h_833,w_1480,c_fill');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+/* section {
   scroll-snap-align: center;
- 
-}
-
+} */
+/* 
+section:nth-child(odd) {} */
 /* .container {
   background-color: blue;
   scroll-behavior: smooth;
