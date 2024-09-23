@@ -37,12 +37,12 @@ const Form = () => {
     }
     return (
         <form
-            className='shadow-lg bg-white'
+            className='lg:text-black-500 w-full'
             onSubmit={handleSubmit(onSubmit)}
             noValidate
             style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '30px' }}
         >
-            <h2 className='text-2xl font-black text-center'>Say Hello </h2>
+            <h2 className='text-2xl font-black text-center'>Leave us a message </h2>
             <Controller
                 name="name"
                 control={control}
@@ -56,9 +56,31 @@ const Form = () => {
                         fullWidth
                         error={!!errors.name}
                         helperText={errors.name?.message}
+                    // InputProps={{
+                    //     style: { borderColor: 'black' },
+                    //     // Optionally, you can add classes or other styles here
+                    // }}
+                    // InputLabelProps={{
+                    //     style: { color: 'black' } // Change label color to black if needed
+                    // }}
+                    // // Alternatively, you could also use sx prop if you're using Material-UI v5
+                    // sx={{
+                    //     '& .MuiOutlinedInput-root': {
+                    //         '& fieldset': {
+                    //             borderColor: 'black',
+                    //         },
+                    //         '&:hover fieldset': {
+                    //             borderColor: 'black',
+                    //         },
+                    //         '&.Mui-focused fieldset': {
+                    //             borderColor: 'black',
+                    //         },
+                    //     },
+                    // }}
                     />
                 )}
             />
+
             <Controller
                 name="email"
                 control={control}
@@ -72,6 +94,27 @@ const Form = () => {
                         fullWidth
                         error={!!errors.email}
                         helperText={errors.email?.message}
+                    // InputProps={{
+                    //     style: { borderColor: 'black' },
+                    //     // Optionally, you can add classes or other styles here
+                    // }}
+                    // InputLabelProps={{
+                    //     style: { color: 'black' } // Change label color to black if needed
+                    // }}
+                    // // Alternatively, you could also use sx prop if you're using Material-UI v5
+                    // sx={{
+                    //     '& .MuiOutlinedInput-root': {
+                    //         '& fieldset': {
+                    //             borderColor: 'black',
+                    //         },
+                    //         '&:hover fieldset': {
+                    //             borderColor: 'black',
+                    //         },
+                    //         '&.Mui-focused fieldset': {
+                    //             borderColor: 'black',
+                    //         },
+                    //     },
+                    // }}
                     />
                 )}
             />
@@ -90,6 +133,27 @@ const Form = () => {
                         rows={4}
                         error={!!errors.message}
                         helperText={errors.message?.message}
+                    // InputProps={{
+                    //     style: { borderColor: 'black' },
+                    //     // Optionally, you can add classes or other styles here
+                    // }}
+                    // InputLabelProps={{
+                    //     style: { color: 'black' } // Change label color to black if needed
+                    // }}
+                    // Alternatively, you could also use sx prop if you're using Material-UI v5
+                    // sx={{
+                    //     '& .MuiOutlinedInput-root': {
+                    //         '& fieldset': {
+                    //             borderColor: 'black',
+                    //         },
+                    //         '&:hover fieldset': {
+                    //             borderColor: 'white',
+                    //         },
+                    //         '&.Mui-focused fieldset': {
+                    //             borderColor: 'white',
+                    //         },
+                    //     },
+                    // }}
                     />
                 )}
             />

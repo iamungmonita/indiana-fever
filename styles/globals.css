@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 .hide-scrollbar {
   scrollbar-width: none;
 }
@@ -11,24 +9,33 @@
   display: none; /* Chrome, Safari, and Edge */
 }
 
-section#one {
-  background-image: url('https://cdn2.creativecirclemedia.com/crawfordsville/original/20240605-123156-cda-thumbnail_USATSI_23444438.jpg');
+section#about {
+  background-image: url('/slider/caitlin-5.jpg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
-section#two {
-  background-image: url('https://cdn2.creativecirclemedia.com/crawfordsville/original/20240605-123156-cda-thumbnail_USATSI_23444438.jpg');
+section#achievement{
+  background-image: url('/slider/caitlin-4.jpg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
-section#four {
-  background-image: url('https://media.cnn.com/api/v1/images/stellar/prod/2024-02-24t071013z-1827543648-mt1usatoday22603379-rtrmadp-3-ncaa-womens-basketball-penn-st-at-iowa.jpg?c=16x9&q=h_833,w_1480,c_fill');
+section#shop {
+  background-image: url('/fever-shop.webp');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
+.overlay {
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(18, 16, 16, 0.2))
+}
+/* section#three {  
+  background-image: url('/slider/caitlin-6.webp');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+} */
 /* section {
   scroll-snap-align: center;
 } */

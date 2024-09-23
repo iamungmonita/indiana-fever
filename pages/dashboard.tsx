@@ -78,10 +78,24 @@ const Dashboard: React.FC<AuthProviderProps> = ({ children }) => {
                     <button onClick={logout}>LOG OUT</button>
                 </>
             )}
-            <div className='flex'>
-                {message.map((mess) => <p
-                    className='bg-slate-100 p-10 rounded-md max-w-[300px]'
-                    key={mess._id}>{mess.name}</p>)}
+            <div className='flex border w-screen flex-col flex-wrap'>
+                {message.map((mess) => (
+                    <p
+                        className='w-[70%] p-3 border-b flex-grow rounded-md min-w-[100px] flex-shrink-0'
+                        key={mess._id}
+                    >
+                        {mess.name}
+                        <br />
+
+                        <div>
+                            <span>{mess.message}</span>
+                            <button className='bg-slate-100 py-2 px-5 rounded-md'>
+                                <a href={`mailto:${mess.email}?subject=Subject%20Here&body=Message%20Here`}>Reply</a>
+
+                            </button>
+                        </div>
+                    </p>
+                ))}
             </div>
             {children}
         </AuthContext.Provider>

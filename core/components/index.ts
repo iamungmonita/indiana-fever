@@ -1,3 +1,7 @@
 export { default as Dropdown } from './Dropdown/index'
 export { default as ContactForm } from './ContactForm/index'
 export { default as Card } from './Card/index'
+export { default as Breadcrumb } from './Breadcrumb/index'
+export { default as Slider } from './Slider/index'
+export { default as Pagination } from './Pagination/index'
+export { default as Layout } from './Layout/index'
